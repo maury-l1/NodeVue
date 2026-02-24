@@ -44,14 +44,14 @@ const description = ref('');
 // Fetch tareas
 const fetchTasks = async () => {
   const res = await fetch('/api/tasks', {
-    headers: { Authorization: `Bearer ${userStore.token}` }
+    headers: { Authorization: `Bearer ${userStore.token}` },
   });
   tasks.value = await res.json();
 };
 
 // Crear tarea
 const createTask = async () => {
-  const res = await fetch('/api/tasks', {
+  const res = await fetch('/api/createTask', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userStore.token}` },
     body: JSON.stringify({ title: title.value, description: description.value })
@@ -65,6 +65,7 @@ const createTask = async () => {
 
 // Redirigir a EditTask.vue
 const goToEdit = (id) => {
+  console.log(userStore.token)
   router.push(`/tasks/edit/${id}`);
 };
 

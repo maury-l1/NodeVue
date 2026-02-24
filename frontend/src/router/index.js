@@ -6,6 +6,8 @@ import EditTask from '@/views/EditTask.vue'
 import Users from '@/views/Users.vue'
 import { adminGuard } from '@/middleware/adminGuard'
 import { authGuard } from '@/middleware/authGuard' 
+import Error from '@/views/Error.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +36,12 @@ const router = createRouter({
       name: 'Users',
       component: Users,
       beforeEnter: adminGuard
-    }
+    },
+     {
+      path: '/error',
+      name: 'Error',
+      component: Error
+    },
   ],
 })
 

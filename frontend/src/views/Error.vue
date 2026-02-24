@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-// No necesita lógica especial
+  console.log("Pagina no permitida")
 </script>
 
 <style src="../assets/styles.css"></style>

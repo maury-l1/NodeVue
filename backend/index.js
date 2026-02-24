@@ -161,6 +161,25 @@ app.post('/api/createTask', authMiddleware, (req, res) => {
   res.status(201).json({ id: info.lastInsertRowid, title, description, user_id: req.user.id });
 });
 
+// DELETE /api/tasks/:id
+app.delete('/api/tasks/:id', authMiddleware, (req, res) => {
+  const taskId = req.params.id;
+
+  try {
+    // Verificar si la tarea existe
+    const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+    if (!task) return res.status(404).json({ error: 'Tarea no encontrada' });
+
+    // Eliminar la tarea
+    db.prepare('DELETE FROM tasks WHERE id = ?').run(taskId);
+
+    res.json({ mensaje: 'Tarea eliminada correctamente', id: taskId });
+
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar la tarea' });
+  }
+});
+
 // ----------------------
 // GET /api/users
 // Devuelve todos los usuarios (solo admin)
@@ -178,6 +197,29 @@ app.get('/api/users', authMiddleware, adminMiddleware, (req, res) => {
   }
 });
 
+// DELETE /api/users/:id
+app.delete('/api/users/:id', authMiddleware, adminMiddleware, (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    // Verificar si el usuario existe
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // Evitar que un admin se borre a sí mismo
+    if (user.id === req.user.id) {
+      return res.status(400).json({ error: 'No puedes eliminar tu propio usuario' });
+    }
+
+    // Eliminar el usuario
+    db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+
+    res.json({ mensaje: 'Usuario eliminado correctamente', id: userId });
+
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar el usuario' });
+  }
+});
 
 // Levantar servidor
 app.listen(3000, () => {
